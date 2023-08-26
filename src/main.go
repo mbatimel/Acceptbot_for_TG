@@ -10,7 +10,7 @@ const (
 )
 func main() {
 	tgClient := telegram.New(tgBotHost,mustToken())
-	
+
 }
 func mustToken() string {
 	token := flag.String("token-bot-token", " ", "bot token")

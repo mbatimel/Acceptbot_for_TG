@@ -2,7 +2,7 @@ package telegram
 
 import (
 	"encoding/json"
-	"example/main/lib/e"
+	"example/main/src/lib/e"
 	"io"
 	"net/http"
 	"net/url"
