@@ -5,6 +5,16 @@ type UpdateResponse struct {
 }
 type Update struct {
 	ID int `json: "update_id"`
-	Massage string `json:"massage"`
+	Message *IncomingMessage `json:"massage"`
 }
-type Massage struct{}
+type IncomingMessage struct{
+	Text string `json:"text"`
+	From From `json:"from"`
+	Chat Chat `json:"chat"`
+}
+type From struct {
+	Username string `json:"username"`
+}
+type Chat struct {
+	ID int `json:"id"`
+}
