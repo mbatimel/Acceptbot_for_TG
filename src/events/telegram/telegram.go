@@ -16,8 +16,12 @@ type Meta struct{
 	ChatID int
 	Username string
 }
-var ErrUnknownEventType = errors.New("unknown event type")
-func New(client *telegram.Client,storage storage.Storage) *Processor {
+var (
+	ErrUnknownEventType = errors.New("unknown event type")
+	ErrUnknownMetaType = errors.New("unknown Meta type")
+)
+
+func New(client *telegram.Client, storage storage.Storage) *Processor {
 	return &Processor{
 		tg: client,
 		storage: storage,
@@ -39,24 +43,31 @@ func ( p *Processor) Fetch(limit int)([]events.Event,error){
 	return res,nil
 }
 func (p *Processor) Process( event events.Event) error {
-	// сюда надо будет добавить что у нас будут кнопки чтобы код смог работать с кнопками 
-	// не забудь добавить еще сюда работу с кнопками которые должны будут приниматься в методе fetch
 	switch event.Type {
 	case events.Message:
-		p.processMessage(event)
+		return p.processMessage(event)
 	default:
 		return e.Wrap("can't process message", ErrUnknownEventType)
 	}
 	
 }
-func (p *Processor) processMessage(event events.Event){
+func (p *Processor) processMessage(event events.Event) error{
 	meta,err:=meta(event)
+	if err != nil {
+		return e.Wrap("can't process message", err)
+	}
+	if  err := p.doCmd(event.Text, meta.ChatID,meta.Username); err != nil {
+		return e.Wrap("can't process message", err)
+	}
+	return nil
+
 }
 func meta(event events.Event)(Meta, error)  {
 	res, ok:=event.Meta.(Meta)
 	if !ok{
-		
+		return Meta{},e.Wrap("can't get meta ", ErrUnknownMetaType)
 	}
+	return res, nil
 }
 func event(upd telegram.Update) events.Event{
 	updType:= fetchType(upd)

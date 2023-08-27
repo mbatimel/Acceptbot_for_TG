@@ -2,10 +2,12 @@ package storage
 
 import (
 	"crypto/sha1"
+	"errors"
 	"example/main/src/lib/e"
 	"fmt"
 	"io"
 )
+var  ErrNoSavedPages = errors.New("no saved files")
 type Storage interface {
 	Save(p *Page) error
 	PickRandom(UserName string) (*Page, error)
